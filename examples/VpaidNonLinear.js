@@ -114,6 +114,7 @@ VpaidNonLinear.prototype.initAd = function(
   this.videoSlot_.style = "display: none";
 
   var data = JSON.parse(creativeData['AdParameters']);
+  this.ads_ = data.ads || [];
   this.imageUrls_ = data.overlays || [];
   this.videos_ = data.videos || [];
 
@@ -140,6 +141,23 @@ VpaidNonLinear.prototype.updateVideoPlayerSize_ = function() {
  */
 VpaidNonLinear.prototype.handshakeVersion = function(version) {
   return '2.0';
+};
+
+
+/**
+ * Called when the overlay is clicked.  Increases the ad duration 10 seconds.
+ * @private
+ */
+ VpaidNonLinear.prototype.adsOnClick_ = function() {
+  this.eventCallbacks_['AdClickThru'](
+      '', // optional URL
+      '0',  // id of the clickThru
+      true); // whether the player should handle the clickthrough event
+
+  // Make the duration longer when a click happens.
+  // This is mostly a method to test AdRemainingTimeChange behavior works.
+  this.attributes_.duration += 10;
+  this.invokeCallback_('AdRemainingTimeChange');
 };
 
 
@@ -212,29 +230,56 @@ VpaidNonLinear.prototype.overlay2OnClick_ = function() {
  */
 VpaidNonLinear.prototype.startAd = function() {
   this.log('Starting ad');
-  var style = document.createElement('style');
-  style.type = 'text/css';
-  if (style.styleSheet) {
-    style.styleSheet.cssText = VpaidNonLinear.IMG_CSS;
-  } else {
-    style.appendChild(document.createTextNode(VpaidNonLinear.IMG_CSS));
+
+
+  const myCanvas = document.createElement('canvas');
+  myCanvas.width = 300;
+  myCanvas.height = 150;
+  const myContext = myCanvas.getContext('2d');
+  let x = 0;
+  let adImg = new Image();
+  let adText = '';
+  adImg.crossOrigin = 'anonymous';
+  adImg.src = this.ads_[0].thumbnailUrl || '';
+  adText = this.ads_[0].title || '';
+  this.slot_.appendChild(myCanvas);
+  myCanvas.addEventListener('click', this.adsOnClick_.bind(this), false);
+  draw();
+
+  function draw() {
+    x = (x + 1) % myCanvas.width;
+    myContext.fillStyle = 'white';
+    myContext.fillRect(0, 0, myCanvas.width, myCanvas.height);
+    myContext.drawImage(adImg, x - 100, 0);
+    myContext.fillStyle = 'black';
+    myContext.font = '50px serif';
+    myContext.fillText(adText, myCanvas.width - x, 100);
+    requestAnimationFrame(draw);
   }
-  this.slot_.appendChild(style);
+
+  // var style = document.createElement('style');
+  // style.type = 'text/css';
+  // if (style.styleSheet) {
+  //   style.styleSheet.cssText = VpaidNonLinear.IMG_CSS;
+  // } else {
+  //   style.appendChild(document.createTextNode(VpaidNonLinear.IMG_CSS));
+  // }
+  // this.slot_.appendChild(style);
   var date = new Date();
   this.startTime_ = date.getTime();
   this.timePaused_ = 0;
   this.lastRemainingTime_ = -1;
   this.isPaused_ = false;
-  var img = document.createElement('img');
-  img.src = this.imageUrls_[0] || '';
-  img.classList.add('animatedImg');
-  this.slot_.appendChild(img);
-  img.addEventListener('click', this.overlayOnClick_.bind(this), false);
+  // var img = document.createElement('img');
+  // img.src = this.imageUrls_[0] || '';
+  // img.classList.add('animatedImg');
+  // this.slot_.appendChild(img);
+  // img.addEventListener('click', this.overlayOnClick_.bind(this), false);
 
-  img = document.createElement('img');
-  img.src = this.imageUrls_[1] || '';
-  this.slot_.appendChild(img);
-  img.addEventListener('click', this.overlay2OnClick_.bind(this), false);
+  // img = document.createElement('img');
+  // img.src = this.imageUrls_[1] || '';
+  // this.slot_.appendChild(img);
+  // img.addEventListener('click', this.overlay2OnClick_.bind(this), false);
 
   this.invokeCallback_('AdStarted');
   this.invokeCallback_('AdImpression');
