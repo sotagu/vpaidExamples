@@ -240,7 +240,8 @@ VpaidNonLinear.prototype.startAd = function() {
   let adImg = new Image();
   let adText = '';
   adImg.crossOrigin = 'anonymous';
-  adImg.src = this.ads_[0].thumbnailUrl || '';
+  // adImg.src = this.ads_[0].thumbnailUrl || '';
+  adImg.src = 'https://66.media.tumblr.com/84d332cafeb1052c477c979281e5713b/tumblr_owe3l0tkCj1wxdq3zo1_1280.jpg';
   adText = this.ads_[0].title || '';
   this.slot_.appendChild(myCanvas);
   myCanvas.addEventListener('click', this.adsOnClick_.bind(this), false);
