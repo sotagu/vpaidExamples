@@ -233,8 +233,8 @@ VpaidNonLinear.prototype.startAd = function() {
 
 
   const myCanvas = document.createElement('canvas');
-  myCanvas.width = 300;
-  myCanvas.height = 150;
+  myCanvas.width = this.attributes_['width'];
+  myCanvas.height = this.attributes_['height'];
   const myContext = myCanvas.getContext('2d');
   let x = 0;
   let adImg = new Image();
