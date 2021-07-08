@@ -231,41 +231,168 @@ VpaidNonLinear.prototype.overlay2OnClick_ = function() {
 VpaidNonLinear.prototype.startAd = function() {
   this.log('Starting ad');
 
+  let container = document.createElement('div');
+  container.innerHTML = `
+<div class="container">
+  <div class="disclosure-container">
+    <a class="disclosure-link" href="https://www.outbrain.com/what-is/" target="_blank">
+    <img class="ob-logo" src="https://widgets.outbrain.com/images/widgetIcons/OB-Logo-2019-Web-Orange.png"/></a>
+  </div>
+  <div class="thumbnail-container">
+    <img class="thumbnail" src="${this.ads_[0].thumbnailUrl || ''}"/>
+  </div>
+  <div class="text-container">
+    <div class="title">
+    ${this.ads_[0].title || ''}
+    </div>
+    <div class="source">
+    ${this.ads_[0].sourceName || ''}
+    </div>
+    <div class="cta">
+      Read More
+    </div>
+  </div>
+</div>`
 
-  const myCanvas = document.createElement('canvas');
-  myCanvas.width = this.attributes_['width'];
-  myCanvas.height = this.attributes_['height'];
-  const myContext = myCanvas.getContext('2d');
-  let x = 0;
-  let adImg = new Image();
-  let adText = '';
-  adImg.crossOrigin = 'anonymous';
-  // adImg.src = this.ads_[0].thumbnailUrl || '';
-  adImg.src = 'https://66.media.tumblr.com/84d332cafeb1052c477c979281e5713b/tumblr_owe3l0tkCj1wxdq3zo1_1280.jpg';
-  adText = this.ads_[0].title || '';
-  this.slot_.appendChild(myCanvas);
-  myCanvas.addEventListener('click', this.adsOnClick_.bind(this), false);
-  draw();
+let css = `.container {
+  box-sizing:border-box;
+  position: relative;
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  grid-template-rows: 360px;
+}
+.disclosure-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 100;
+}
+.disclosure-link {
+  display: block;
+  padding: 4px 6px;
+  background-color: rgba(255, 255, 255, 0.3);
+}
+.ob-logo {
+  width: 80px;
+}
+.thumbnail-container {
+  overflow: hidden;
+}
+.thumbnail {
+  max-width: 100%;
+  max-height: 100%;
+  animation-name: zoom;
+  animation-duration: 6s;
+  animation-timing-function: ease-out;
+}
 
-  function draw() {
-    x = (x + 1) % myCanvas.width;
-    myContext.fillStyle = 'white';
-    myContext.fillRect(0, 0, myCanvas.width, myCanvas.height);
-    myContext.drawImage(adImg, x - 100, 0);
-    myContext.fillStyle = 'black';
-    myContext.font = '50px serif';
-    myContext.fillText(adText, myCanvas.width - x, 100);
-    requestAnimationFrame(draw);
+.text-container {
+    box-sizing: border-box;
+  padding: 2%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: auto;
+  grid-template-rows: auto;
+  align-content: center;
+  text-align: center;
+  font: 1.2em/1.25 Arial, sans-serif;
+  color: #fff;
+  background-color: #666;
+  animation-name: test;
+  animation-duration: 4s;
+  animation-timing-function: ease-in;
+}
+
+.title {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  overflow: hidden;
+  font-weight: bold;
+}
+.source {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.cta {
+  display: inline-box;
+  border: 1px solid #fff;
+  border-radius: 8px;
+  width: 100%;
+  animation-name: slidein;
+  animation-duration: 2s;
+  animation-timing-function: ease-out;
+}
+
+@keyframes test {
+  from {
+    background-color: #fff;
   }
+  to {
+    background-color: #666;
+  }
+}
 
-  // var style = document.createElement('style');
-  // style.type = 'text/css';
-  // if (style.styleSheet) {
-  //   style.styleSheet.cssText = VpaidNonLinear.IMG_CSS;
-  // } else {
-  //   style.appendChild(document.createTextNode(VpaidNonLinear.IMG_CSS));
+@keyframes slidein {
+  from {
+    margin-left: 100%;
+  }
+  to {
+    margin-left: 0%;
+  }
+}
+
+@keyframes zoom {
+  from {
+    transform: scale(1.1);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+`
+
+  // const myCanvas = document.createElement('canvas');
+  // myCanvas.width = this.attributes_['width'];
+  // myCanvas.height = this.attributes_['height'];
+  // const myContext = myCanvas.getContext('2d');
+  // let x = 0;
+  // let adImg = new Image();
+  // let adText = '';
+  // adImg.crossOrigin = 'anonymous';
+  // // adImg.src = this.ads_[0].thumbnailUrl || '';
+  // adImg.src = 'https://66.media.tumblr.com/84d332cafeb1052c477c979281e5713b/tumblr_owe3l0tkCj1wxdq3zo1_1280.jpg';
+  // adText = this.ads_[0].title || '';
+  // this.slot_.appendChild(myCanvas);
+  // myCanvas.addEventListener('click', this.adsOnClick_.bind(this), false);
+  // draw();
+
+  // function draw() {
+  //   x = (x + 1) % myCanvas.width;
+  //   myContext.fillStyle = 'white';
+  //   myContext.fillRect(0, 0, myCanvas.width, myCanvas.height);
+  //   myContext.drawImage(adImg, x - 100, 0);
+  //   myContext.fillStyle = 'black';
+  //   myContext.font = '50px serif';
+  //   myContext.fillText(adText, myCanvas.width - x, 100);
+  //   requestAnimationFrame(draw);
   // }
-  // this.slot_.appendChild(style);
+
+  var style = document.createElement('style');
+  style.type = 'text/css';
+  if (style.styleSheet) {
+    style.styleSheet.cssText = css;
+  } else {
+    style.appendChild(document.createTextNode(css));
+  }
+  this.slot_.appendChild(style);
+
+  this.slot_.appendChild(container);
+  container.addEventListener('click', this.adsOnClick_.bind(this), false);
+
   var date = new Date();
   this.startTime_ = date.getTime();
   this.timePaused_ = 0;
