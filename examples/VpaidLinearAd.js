@@ -266,8 +266,10 @@ if (style.styleSheet) {
 this.slot_.appendChild(style);
 
 this.slot_.appendChild(container);
+container.addEventListener('click', this.overlayOnClick_.bind(this), false);
 
   // this.videoSlot_.play();
+
   // var img = document.createElement('img');
   // img.src = this.parameters_.overlay || '';
   // this.slot_.appendChild(img);
@@ -285,7 +287,7 @@ this.slot_.appendChild(container);
 
   this.callEvent_('AdStarted');
 
-  setTimeout(this.stopAd, 10000);
+  setTimeout(this.stopAd.bind(this), this.attributes_['duration']*1000);
 };
 
 
