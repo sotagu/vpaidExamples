@@ -238,8 +238,6 @@ VpaidLinearAd.prototype.startAd = function() {
   container.innerHTML = `
 <div class="container">
   <div class="disclosure-container">
-    <a class="disclosure-link" href="https://www.outbrain.com/what-is/" target="_blank">
-    <img class="ob-logo" src="https://widgets.outbrain.com/images/widgetIcons/OB-Logo-2019-Web-Orange.png"/></a>
   </div>
   <div class="thumbnail-container">
     <img class="thumbnail" src="${this.parameters_.ads[0].thumbnailUrl || ''}"/>
@@ -269,7 +267,7 @@ this.slot_.appendChild(style);
 
 this.slot_.appendChild(container);
 
-  this.videoSlot_.play();
+  // this.videoSlot_.play();
   // var img = document.createElement('img');
   // img.src = this.parameters_.overlay || '';
   // this.slot_.appendChild(img);
@@ -286,6 +284,8 @@ this.slot_.appendChild(container);
   // this.slot_.appendChild(muteButton);
 
   this.callEvent_('AdStarted');
+
+  setTimeout(this.stopAd, 10000);
 };
 
 
